@@ -78,7 +78,12 @@ public class StudentListAdapter extends BaseAdapter {
 
         // Atualiza os valores das views
         final Student student = students.get(position);
-        Picasso.with(context).load(student.getFotoUrl()).into(foto);
+
+        String fotoUrl = "https://robohash.org/base";
+        if (student.getFotoUrl() != null && !student.getFotoUrl().isEmpty()) {
+            fotoUrl = student.getFotoUrl();
+        }
+        Picasso.with(context).load(fotoUrl).into(foto);
         nome.setText(student.getNome());
         idade.setText(String.valueOf(String.valueOf(student.getIdade())));
         endereco.setText(student.getEndereco());
@@ -139,19 +144,20 @@ public class StudentListAdapter extends BaseAdapter {
                     Log.e(TAG, response.message());
                 }
 
-                if(pDialog!=null) {
+                if (pDialog != null) {
                     pDialog.dismiss();
                 }
+                notifyDataSetChanged();
             }
 
             @Override
             public void onFailure(Call<StudentReturn> call, Throwable t) {
                 Log.e(TAG, t.getMessage());
-                if(pDialog!=null) {
+                if (pDialog != null) {
                     pDialog.dismiss();
                 }
             }
         });
-        notifyDataSetChanged();
+
     }
 }

@@ -16,6 +16,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -54,6 +55,14 @@ public class MainActivity extends AppCompatActivity {
     MenuItem sobre;
     Toolbar toolbar;
 
+    private EditText name;
+    private EditText idade;
+    private EditText telefone;
+    private EditText endereco;
+    private EditText fotoUrl;
+
+    private EditText url;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -63,23 +72,25 @@ public class MainActivity extends AppCompatActivity {
         setContentView(viewList);
         view = inflater.inflate(R.layout.dialog_add, null);
 
-        toolbar = (Toolbar)findViewById(R.id.toolbar);
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         toolbar.setTitle("StudentsList");
 
-        final EditText url = (EditText)view.findViewById(R.id.url);
-        foto = (ImageView)view.findViewById(R.id.fotoAluno);
+        url = (EditText) view.findViewById(R.id.url);
+        foto = (ImageView) view.findViewById(R.id.fotoAluno);
 
         url.addTextChangedListener(new TextWatcher() {
             @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) { }
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
 
             @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) { }
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+            }
 
             @Override
             public void afterTextChanged(Editable s) {
-                updateSmallImage(url.getText().toString());
+                updateSmallImage(url != null ? url.getText().toString() : "default");
             }
         });
 
@@ -124,12 +135,15 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void addAluno() {
+        if (view.getParent() != null) {
+            ((ViewGroup) view.getParent()).removeView(view);
+        }
 
-        final EditText name = (EditText)view.findViewById(R.id.name);
-        final EditText idade = (EditText)view.findViewById(R.id.idade);
-        final EditText telefone = (EditText)view.findViewById(R.id.tel);
-        final EditText endereco = (EditText)view.findViewById(R.id.endereco);
-        final EditText fotoUrl = (EditText)view.findViewById(R.id.url);
+        name = (EditText) view.findViewById(R.id.name);
+        idade = (EditText) view.findViewById(R.id.idade);
+        telefone = (EditText) view.findViewById(R.id.tel);
+        endereco = (EditText) view.findViewById(R.id.endereco);
+        fotoUrl = (EditText) view.findViewById(R.id.url);
         pDialog.setMessage("Adicionando aluno(a)...");
 
         final AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
@@ -138,13 +152,23 @@ public class MainActivity extends AppCompatActivity {
                     public void onClick(DialogInterface dialog, int id) {
                         Student novo = new Student();
 
-                            novo.setNome(name.getText().toString());
-                            novo.setIdade(Integer.parseInt(idade.getText().toString()));
-                            novo.setTelefone(telefone.getText().toString());
-                            novo.setEndereco(endereco.getText().toString());
-                            novo.setFotoUrl(fotoUrl.getText().toString());
-                            callAddAluno(novo);
+                        novo.setNome(name.getText().toString());
+                        int idadeInt = 0;
+                        if (idade.getText().length() != 0) {
+                            idadeInt = Integer.parseInt(idade.getText().toString());
+                        }
+                        novo.setIdade(idadeInt);
+                        novo.setTelefone(telefone.getText().toString());
+                        novo.setEndereco(endereco.getText().toString());
 
+                        String textFotoUrl = "";
+                        if (null == fotoUrl.getText()) {
+                            textFotoUrl = "https://robohash.org/fotobase";
+                        } else {
+                            textFotoUrl = fotoUrl.getText().toString();
+                        }
+                        novo.setFotoUrl(textFotoUrl);
+                        callAddAluno(novo);
                     }
                 })
                 .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
@@ -168,6 +192,14 @@ public class MainActivity extends AppCompatActivity {
                     pDialog.setMessage("Buscando dados...");
                     pDialog.setIndeterminate(true);
                     pDialog.setCancelable(false);
+
+                    //Limpa os campos para inserir outro novo aluno
+                    name.setText("");
+                    idade.setText("");
+                    telefone.setText("");
+                    endereco.setText("");
+                    //fotoUrl.setText(""); se descomentar vai dar pau
+
                     callGetAlunos();
                 } else {
                     Log.e(TAG, response.message());
