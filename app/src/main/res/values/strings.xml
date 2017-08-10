@@ -1,0 +1,17 @@
+<resources>
+    <string name="app_name">Projeto Aluno</string>
+    <string name="action_settings">Sobre</string>
+    <string name="menu_out">Sair</string>
+    <string name="menu_day">Visão diurna</string>
+    <string name="menu_night">Visão noturna</string>
+    <string name="ok">Adicionar</string>
+    <string name="cancel">Cancelar</string>
+    <string name="confirm">Confirmar</string>
+    <string name="nome">Nome</string>
+    <string name="telefone">Telefone</string>
+    <string name="idade">Idade</string>
+    <string name="endereco">Endereço</string>
+    <string name="url">URL da foto</string>
+    <string name="title_activity_maps">Map</string>
+    <string name="atencao">Atenção!</string>
+</resources>
